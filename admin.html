@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biexpress Admin - Control Panel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        :root {
+            --bie-primary: #0f172a; /* Warna admin lebih gelap/elegan */
+            --bie-accent: #2563eb;
+            --bie-bg: #f1f5f9;
+            --bie-card: #ffffff;
+            --bie-text: #1e293b;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bie-bg); color: var(--bie-text); padding-bottom: 40px; }
+        
+        header { background: var(--bie-primary); color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        header h1 { font-size: 20px; display: flex; align-items: center; gap: 10px; }
+        .badge-admin { background: #ef4444; color: white; font-size: 11px; padding: 3px 8px; border-radius: 12px; font-weight: bold; }
+        
+        .nav-tabs { background: #ffffff; display: flex; justify-content: center; gap: 5px; padding: 10px; border-bottom: 1px solid #e2e8f0; flex-wrap: wrap; }
+        .tab-btn { background: transparent; border: none; padding: 10px 15px; font-size: 14px; font-weight: 600; color: #64748b; cursor: pointer; border-radius: 6px; display: flex; align-items: center; gap: 8px; transition: 0.2s; }
+        .tab-btn.active { background: #e2e8f0; color: var(--bie-primary); }
+
+        .container { max-width: 900px; margin: 20px auto; padding: 0 15px; }
+        .card { background: var(--bie-card); border-radius: 12px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .card-title { font-size: 16px; font-weight: bold; margin-bottom: 15px; color: var(--bie-primary); display: flex; align-items: center; gap: 8px; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px; }
+        
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .form-group { margin-bottom: 12px; }
+        .form-group.full { grid-column: span 2; }
+        label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px; color: #475569; }
+        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; outline: none; }
+        input:focus, select:focus { border-color: var(--bie-accent); }
+        
+        .btn { background: var(--bie-accent); color: white; border: none; padding: 10px 18px; border-radius: 6px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; justify-content: center; width: 100%; }
+        .btn.success { background: #16a34a; }
+        .btn:hover { opacity: 0.9; }
+        
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .milestone-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; border-radius: 8px; margin-top: 15px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1><i class="fa-solid fa-user-shield"></i> Biexpress</h1>
+        <div><span class="badge-admin">ADMINISTRATOR PORTAL</span></div>
+    </header>
+
+    <div class="nav-tabs">
+        <button class="tab-btn active" onclick="switchTab('tabBuatResi')"><i class="fa-solid fa-plus-circle"></i> Buat Resi Baru</button>
+        <button class="tab-btn" onclick="switchTab('tabUpdateStatus')"><i class="fa-solid fa-pen-to-square"></i> Update Status & PO</button>
+        <button class="tab-btn" onclick="switchTab('tabKelolaData')"><i class="fa-solid fa-database"></i> Kelola Kurir & Pelanggan</button>
+    </div>
+
+    <div class="container">
+        
+        <!-- TAB 1: BUAT RESI BARU -->
+        <div id="tabBuatResi" class="tab-content active">
+            <div class="card">
+                <div class="card-title"><i class="fa-solid fa-file-signature"></i> Form Input Pengiriman Baru</div>
+                <form id="formBuatResi">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Nama Pengirim</label>
+                            <input type="text" id="inpPengirim" required>
+                        </div>
+                        <div class="form-group">
+                            <label>No. HP Pengirim (Penting utk Kiriman Saya)</label>
+                            <input type="text" id="inpHpPengirim" placeholder="08..." required>
+                        </div>
+                        <div class="form-group">
+                            <label>Nama Penerima</label>
+                            <input type="text" id="inpPenerima" required>
+                        </div>
+                        <div class="form-group">
+                            <label>No. HP Penerima (Penting utk Kiriman Saya)</label>
+                            <input type="text" id="inpHpPenerima" placeholder="08..." required>
+                        </div>
+                        <div class="form-group full">
+                            <label>Deskripsi Barang</label>
+                            <input type="text" id="inpBarang" placeholder="Contoh: Sparepart Mesin" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Kota Asal</label>
+                            <input type="text" id="inpKotaAsal" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Kota Tujuan</label>
+                            <input type="text" id="inpKotaTujuan" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Kurir Bertugas</label>
+                            <input type="text" id="inpKurir" placeholder="Nama Driver">
+                        </div>
+                        <div class="form-group">
+                            <label>Plat Nomor Kendaraan</label>
+                            <input type="text" id="inpPlat" placeholder="DD 1234 XX">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn success" style="margin-top: 15px;"><i class="fa-solid fa-save"></i> Simpan & Buat Resi</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- TAB 2: UPDATE STATUS & MILESTONE PO -->
+        <div id="tabUpdateStatus" class="tab-content">
+            <div class="card">
+                <div class="card-title"><i class="fa-solid fa-magnifying-glass"></i> Cari Resi untuk Diupdate</div>
+                <div class="form-group">
+                    <input type="text" id="searchUpdateResi" placeholder="Masukkan Nomor Resi (BIEX...)">
+                </div>
+                <button type="button" class="btn" onclick="cariResiUntukUpdate()"><i class="fa-solid fa-search"></i> Cari Data</button>
+            </div>
+
+            <!-- Form Update (Disembunyikan sampai resi dicari) -->
+            <div id="panelUpdateForm" class="card" style="display:none;">
+                <div class="card-title"><i class="fa-solid fa-pen-to-square"></i> Update Milestone & Status Tracking</div>
+                
+                <div style="background: #e0f2fe; padding: 10px; border-radius: 6px; margin-bottom: 15px;">
+                    <strong>Sedang Mengedit Resi:</strong> <span id="labelResiEdit" style="color: #0369a1; font-weight:bold;">-</span>
+                </div>
+
+                <div class="form-group">
+                    <label>Status Kendaraan/Paket Saat Ini</label>
+                    <input type="text" id="updStatusInfo" placeholder="Contoh: Sedang bongkar muat di gudang transit...">
+                </div>
+
+                <div class="milestone-box">
+                    <h4 style="margin-bottom: 12px;"><i class="fa-solid fa-file-invoice-dollar"></i> Update Tanggal Milestone PO & Invoice</h4>
+                    <p style="font-size: 12px; color: #64748b; margin-bottom: 15px;">(Kosongkan jika belum mencapai tahap ini. Format: DD-MM-YYYY atau teks bebas)</p>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>1. Tanggal PO Masuk</label>
+                            <input type="text" id="updPoMasuk" placeholder="Contoh: 10 Sep 2026">
+                        </div>
+                        <div class="form-group">
+                            <label>2. Barang Diterima</label>
+                            <input type="text" id="updBarangDiterima" placeholder="Contoh: 12 Sep 2026">
+                        </div>
+                        <div class="form-group">
+                            <label>3. Terkirim Invoice</label>
+                            <input type="text" id="updInvKirim" placeholder="Contoh: 13 Sep 2026">
+                        </div>
+                        <div class="form-group">
+                            <label>4. Invoice Diterima (Finance)</label>
+                            <input type="text" id="updInvTerima" placeholder="Contoh: 14 Sep 2026">
+                        </div>
+                        <div class="form-group">
+                            <label>5. Waiting Proses Payment</label>
+                            <input type="text" id="updWaiting" placeholder="Menunggu diproses...">
+                        </div>
+                        <div class="form-group">
+                            <label>6. Payment Lunas</label>
+                            <input type="text" id="updPayment" placeholder="Contoh: Lunas 16 Sep 2026">
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" class="btn success" style="margin-top: 15px;" onclick="simpanUpdateMilestone()"><i class="fa-solid fa-cloud-arrow-up"></i> Simpan Perubahan ke Database</button>
+            </div>
+        </div>
+
+        <!-- TAB 3: KELOLA DATA (SEDERHANA) -->
+        <div id="tabKelolaData" class="tab-content">
+            <div class="card">
+                <div class="card-title"><i class="fa-solid fa-users"></i> Tambah Pelanggan Baru</div>
+                <div class="form-grid">
+                    <div class="form-group"><label>Nama Perusahaan/Pelanggan</label><input type="text" id="regNamaPelanggan"></div>
+                    <div class="form-group"><label>No WhatsApp</label><input type="text" id="regHpPelanggan"></div>
+                </div>
+                <button class="btn" onclick="tambahPelanggan()"><i class="fa-solid fa-save"></i> Simpan Pelanggan</button>
+            </div>
+
+            <div class="card">
+                <div class="card-title"><i class="fa-solid fa-truck"></i> Tambah Kurir / Armada Baru</div>
+                <div class="form-grid">
+                    <div class="form-group"><label>Nama Kurir/Driver</label><input type="text" id="regNamaKurir"></div>
+                    <div class="form-group"><label>Plat Nomor Armada</label><input type="text" id="regPlatKurir"></div>
+                </div>
+                <button class="btn" onclick="tambahKurir()"><i class="fa-solid fa-save"></i> Simpan Kurir</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <script>
+        // Konfigurasi Database Firebase Biexpress
+        const firebaseConfig = {
+            databaseURL: "https://biexpress-default-rtdb.asia-southeast1.firebasedatabase.app/"
+        };
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.database();
+
+        // Navigasi Tab
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        // ==========================================
+        // 1. FUNGSI BUAT RESI BARU
+        // ==========================================
+        document.getElementById("formBuatResi").addEventListener("submit", function(e) {
+            e.preventDefault();
+            
+            // Generate Resi BIEX otomatis (BIEX + 9 Angka Random)
+            const noResi = 'BIEX' + Math.floor(100000000 + Math.random() * 900000000);
+            const plat = document.getElementById("inpPlat").value.trim().toUpperCase();
+            
+            const dataPengiriman = {
+                pengirim: document.getElementById("inpPengirim").value,
+                hpPengirim: document.getElementById("inpHpPengirim").value,
+                penerima: document.getElementById("inpPenerima").value,
+                hpPenerima: document.getElementById("inpHpPenerima").value,
+                barang: document.getElementById("inpBarang").value,
+                kotaAsal: document.getElementById("inpKotaAsal").value,
+                kotaTujuan: document.getElementById("inpKotaTujuan").value,
+                kurir: document.getElementById("inpKurir").value,
+                plat: plat,
+                tglKirim: new Date().toLocaleDateString('id-ID'),
+                status: "Paket telah diterima Biexpress",
+                // Kosongkan milestone awal
+                tglPoMasuk: "", tglBarangDiterima: "", tglInvoiceKirim: "", 
+                tglInvoiceDiterima: "", tglWaitingPayment: "", tglPaymentLunas: ""
+            };
+
+            // Simpan ke Firebase
+            db.ref('pengiriman/' + noResi).set(dataPengiriman).then(() => {
+                // Simpan juga relasi Plat -> Resi untuk pelacakan plat nomor
+                if(plat) db.ref('plat_index/' + plat).set(noResi);
+                
+                alert("BERHASIL! Resi baru dibuat: " + noResi);
+                document.getElementById("formBuatResi").reset();
+            }).catch(err => alert("Gagal menyimpan data: " + err));
+        });
+
+        // ==========================================
+        // 2. FUNGSI UPDATE STATUS & MILESTONE
+        // ==========================================
+        let currentEditResi = "";
+
+        function cariResiUntukUpdate() {
+            let resi = document.getElementById("searchUpdateResi").value.trim().toUpperCase();
+            if (!resi) return alert("Masukkan nomor resi!");
+
+            db.ref('pengiriman/' + resi).once('value').then(snapshot => {
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    currentEditResi = resi;
+                    
+                    document.getElementById("panelUpdateForm").style.display = "block";
+                    document.getElementById("labelResiEdit").innerText = resi;
+                    
+                    // Isi form dengan data yang sudah ada di database
+                    document.getElementById("updStatusInfo").value = data.status || "";
+                    document.getElementById("updPoMasuk").value = data.tglPoMasuk || "";
+                    document.getElementById("updBarangDiterima").value = data.tglBarangDiterima || "";
+                    document.getElementById("updInvKirim").value = data.tglInvoiceKirim || "";
+                    document.getElementById("updInvTerima").value = data.tglInvoiceDiterima || "";
+                    document.getElementById("updWaiting").value = data.tglWaitingPayment || "";
+                    document.getElementById("updPayment").value = data.tglPaymentLunas || "";
+                } else {
+                    alert("Resi tidak ditemukan di sistem!");
+                    document.getElementById("panelUpdateForm").style.display = "none";
+                }
+            });
+        }
+
+        function simpanUpdateMilestone() {
+            if (!currentEditResi) return alert("Cari resi terlebih dahulu!");
+
+            const updateData = {
+                status: document.getElementById("updStatusInfo").value,
+                tglPoMasuk: document.getElementById("updPoMasuk").value,
+                tglBarangDiterima: document.getElementById("updBarangDiterima").value,
+                tglInvoiceKirim: document.getElementById("updInvKirim").value,
+                tglInvoiceDiterima: document.getElementById("updInvTerima").value,
+                tglWaitingPayment: document.getElementById("updWaiting").value,
+                tglPaymentLunas: document.getElementById("updPayment").value
+            };
+
+            db.ref('pengiriman/' + currentEditResi).update(updateData).then(() => {
+                alert("Data Tracking & Milestone berhasil diupdate!");
+            }).catch(err => alert("Gagal update: " + err));
+        }
+
+        // ==========================================
+        // 3. FUNGSI KELOLA DATA SEDERHANA
+        // ==========================================
+        function tambahPelanggan() {
+            const nama = document.getElementById("regNamaPelanggan").value;
+            const hp = document.getElementById("regHpPelanggan").value;
+            if(!nama || !hp) return alert("Isi nama dan HP");
+            db.ref('pelanggan').push({ nama, hp }).then(() => alert("Pelanggan ditambahkan!"));
+        }
+
+        function tambahKurir() {
+            const nama = document.getElementById("regNamaKurir").value;
+            const plat = document.getElementById("regPlatKurir").value;
+            if(!nama || !plat) return alert("Isi nama dan Plat");
+            db.ref('kurir').push({ nama, plat }).then(() => alert("Kurir ditambahkan!"));
+        }
+    </script>
+</body>
+</html>
